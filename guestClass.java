@@ -6,73 +6,88 @@ import javax.swing.JOptionPane;
 import java.sql.*;
 
 public class Guest {
-        int guestID, roomNo;
-        String name, address, contactNo, bookingStart;
+
+        int id;
+        String firstName, lastName, creditCardNo, sDate, sDuration, roomNo, customerID;
         Period bookingDuration;
-        
-        ArrayList custID = new ArrayList();
 
     public Guest() {
     }
 
-    public Guest(int guestID, int roomNo, String bookingStart, String name, String address, String contactNo, Period bookingDuration) {
-        this.guestID = guestID;
+    public Guest(int id, String firstName, String lastName, String creditCardNo, String sDate, String sDuration, String roomNo, String customerID, Period bookingDuration) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.creditCardNo = creditCardNo;
+        this.sDate = sDate;
+        this.sDuration = sDuration;
         this.roomNo = roomNo;
-        this.bookingStart = bookingStart;
-        this.name = name;
-        this.address = address;
-        this.contactNo = contactNo;
+        this.customerID = customerID;
         this.bookingDuration = bookingDuration;
     }
-        
-    
 
-    public int getGuestID() {
-        return guestID;
+    public int getid() {
+        return id;
     }
 
-    public void setGuestID(int guestID) {
-        this.guestID = guestID;
+    public void setid(int id) {
+        this.id = id;
     }
 
-    public int getRoomNo() {
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getCreditCardNo() {
+        return creditCardNo;
+    }
+
+    public void setCreditCardNo(String creditCardNo) {
+        this.creditCardNo = creditCardNo;
+    }
+
+    public String getsDate() {
+        return sDate;
+    }
+
+    public void setsDate(String sDate) {
+        this.sDate = sDate;
+    }
+
+    public String getsDuration() {
+        return sDuration;
+    }
+
+    public void setsDuration(String sDuration) {
+        this.sDuration = sDuration;
+    }
+
+    public String getRoomNo() {
         return roomNo;
     }
 
-    public void setRoomNo(int roomNo) {
+    public void setRoomNo(String roomNo) {
         this.roomNo = roomNo;
     }
 
-    public String getBookingStart() {
-        return bookingStart;
+    public String getCustomerID() {
+        return customerID;
     }
 
-    public void setBookingStart(String bookingStart) {
-        this.bookingStart = bookingStart;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getContactNo() {
-        return contactNo;
-    }
-
-    public void setContactNo(String contactNo) {
-        this.contactNo = contactNo;
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
     public Period getBookingDuration() {
@@ -83,109 +98,35 @@ public class Guest {
         this.bookingDuration = bookingDuration;
     }
 
-    @Override
-    public String toString() {
-        return "Guest{" + "guestID=" + guestID + ", roomNo=" + roomNo + ", bookingStart=" + bookingStart + ", name=" + name + ", address=" + address + ", contactNo=" + contactNo + ", bookingDuration=" + bookingDuration + '}';
-    }
-
-        public void makeReservation(){
-             System.out.println("\n-----Make Reservation-----\n");
-             
-        
-        //Enter guest details
-        String firstName = JOptionPane.showInputDialog(null, "Enter guest first name: ");
-        String lastName = JOptionPane.showInputDialog(null, "Enter guest last name: ");
-         //input creditcard No
-        String creditCardNo = JOptionPane.showInputDialog(null, "Enter Credit Card Number (10 digits):  ");
-        
-        //Check guest records in DB - must be 3 way match
-        //if (record exists in DB){use alter records query)
+    
+    
+    //Insert Guest information
+    public void insert(int id, String firstName, String lastName, String creditCardNo, 
+        String sDate, String sDuration, String roomNo){
+        String sql = "INSERT INTO guest (id, FirstName, LastName, creditCardNo, startDate, startDuration, roomNo)"
+                + "VALUES('"+this.id+"','"+this.firstName+"','"+this.lastName+"','"+this.creditCardNo+"','"+this.sDate+"','"+this.sDuration+"','"+this.roomNo+"');";
        
-        //else{use insert query}
-            
-        //input booking start date
-        //Use calandar in GUI if possible
-        String sDate = JOptionPane.showInputDialog(null, "Enter Booking Start Date (ddmmyy) : ");
-        setBookingStart(sDate);
-        
-        //input booking duration
-        String sDuration = JOptionPane.showInputDialog(null, "Enter Booking Duration (days) : ");
-
-        //input room number
-        String roomNo = JOptionPane.showInputDialog(null, "Enter Room Number (3 digits):  ");
-        
-        //Check room availability on this date
-        //DB connection - do-while loop press 00 to exit loop and reenter booking date?
-        
-        //creation of customerID
-        String customerID = sDate + roomNo;
-        
-        //custID.add(customerID);
-        
-        this.guestID = Integer.valueOf(customerID);
-        
-        try
-            {
-            Class.forName("org.sqlite.JDBC");
-            System.out.println("DB connection made");
-            }
-        catch(Exception err)
-            {
-            
-            System.out.println("Exception 1: "+err);
-            }
-        
-        Connection conn = null;
-      try
-      {
-          conn = DriverManager.getConnection("jdbc:sqlite:Example.db");
-          System.out.println("Connected to example DB");
-      }
-      catch(SQLException s){
-           System.out.println("Exception 1: "+s);
-      }
-       
-        
-        //Enter fields into DB
-        JOptionPane.showMessageDialog(null, "New Customer ID: "+customerID+"\n Booking Duration: " +sDuration+" days\n Guest Name: " + firstName+" "+lastName);
-        
-        String insertSql = "INSERT INTO guest (id, FirstName, LastName, creditCardNo) VALUES ( '"+customerID+"' , '"+firstName+"' , '"+lastName+"' , '"+creditCardNo+"');";
-            
-            PreparedStatement p = null;
-            ResultSet r = null;
-        
-        //insert entry into DB
-         try
-        {
-  
-            p=conn.prepareStatement(insertSql);
-            p.clearParameters();
-            
-            r = p.executeQuery();
-            
-            //display info
-
-            r.close();
-            p.close();
-            conn.close();
-            
-        }
-        catch(SQLException x)
-        {
-            System.out.println("SQL exception: "+x);
-        }
-         
-         }
-        
-        public void checkIn() {
    
-        }
+        Connection conn = null;
+        Statement stmt = null;
         
-        public void checkOut(){
+        try{
+            //Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:C://Users//Jayden//Desktop//sqlite-tools-win32-x86-3200100/Example.db");
+            conn.setAutoCommit(false);
+            System.out.println("Opened DB");
             
-        }
-        
-        public void payBill(){
+            stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
             
+            stmt.close();
+            conn.commit();
+            conn.close();
         }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+
+    }
 }
+        
