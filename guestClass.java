@@ -3,11 +3,15 @@ package starhotelassignment;
 
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.sql.*;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class Guest {
 
-        int id;
+        int id, roomPrice;
         String firstName, lastName, creditCardNo, sDate, sDuration, roomNo, customerID;
         Period bookingDuration;
 
@@ -24,6 +28,14 @@ public class Guest {
         this.roomNo = roomNo;
         this.customerID = customerID;
         this.bookingDuration = bookingDuration;
+    }
+
+    public int getRoomPrice() {
+        return roomPrice;
+    }
+
+    public void setRoomPrice(int roomPrice) {
+        this.roomPrice = roomPrice;
     }
 
     public int getid() {
@@ -98,15 +110,14 @@ public class Guest {
         this.bookingDuration = bookingDuration;
     }
 
-    
-    
     //Insert Guest information
     public void insert(int id, String firstName, String lastName, String creditCardNo, 
         String sDate, String sDuration, String roomNo){
-        String sql = "INSERT INTO guest (id, FirstName, LastName, creditCardNo, startDate, startDuration, roomNo)"
-                + "VALUES('"+this.id+"','"+this.firstName+"','"+this.lastName+"','"+this.creditCardNo+"','"+this.sDate+"','"+this.sDuration+"','"+this.roomNo+"');";
-       
-   
+        
+        String sql = "INSERT INTO guest (id, FirstName, LastName, creditCardNo, startDate, startDuration, roomNo, bill)"
+                + "VALUES('"+this.id+"','"+this.firstName+"','"+this.lastName+"','"+this.creditCardNo+"','"+this.sDate+"','"+this.sDuration+"','"+this.roomNo+"','"+this.roomPrice+"');";
+        //'"+id+"', '"+firstName+"', '"+lastName+"');
+        
         Connection conn = null;
         Statement stmt = null;
         
@@ -128,5 +139,145 @@ public class Guest {
         }
 
     }
-}
+    
+    public void delete(int id){
+        String sql = "DELETE FROM guest WHERE id = " + id + ";";
         
+        Connection conn = null;
+        Statement stmt = null;
+        
+        try{
+            //Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:C://Users//Jayden//Desktop//sqlite-tools-win32-x86-3200100/Example.db");
+            conn.setAutoCommit(false);
+            System.out.println("Opened DB");
+            
+            stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+            
+            stmt.close();
+            conn.commit();
+            conn.close();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+        
+        
+    }
+    
+    public void read(){
+     try{  
+        String sql = "SELECT * FROM guest";
+        
+        Connection conn = null;
+        Statement stmt = null;
+
+        ResultSet rs = stmt.executeQuery(sql);     
+
+        JTable table = new JTable(buildTableModel(rs));
+        
+        JOptionPane.showMessageDialog(null, new JScrollPane(table));
+        
+            //Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:C://Users//Jayden//Desktop//sqlite-tools-win32-x86-3200100/Example.db");
+            conn.setAutoCommit(false);
+            System.out.println("Opened DB");
+            
+            stmt = conn.createStatement();
+            
+            
+            stmt.close();
+            conn.commit();
+            conn.close();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+         
+         
+         
+    }
+
+    public static DefaultTableModel buildTableModel(ResultSet rs) 
+            throws SQLException 
+    {
+        ResultSetMetaData metaData = rs.getMetaData();
+        
+        //names of colums
+        Vector<String> columnNames = new Vector<String>();
+        int columnCount = metaData.getColumnCount();
+        for (int column = 1; column <= columnCount; column++){
+            columnNames.add(metaData.getColumnName(column));
+        }
+        
+        //data of the table
+        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+        while(rs.next()){
+            Vector<Object> vector = new Vector<Object>();
+            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++){
+                vector.add(rs.getObject(columnIndex));
+            }
+            data.add(vector);
+        }
+       
+        return new DefaultTableModel(data, columnNames);
+    }
+    
+    public void checkOut(int id){
+        String sql = "DELETE FROM guest WHERE id = " + id + ";";
+        
+        Connection conn = null;
+        Statement stmt = null;
+        
+        try{
+            //Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:C://Users//Jayden//Desktop//sqlite-tools-win32-x86-3200100/Example.db");
+            conn.setAutoCommit(false);
+            System.out.println("Opened DB");
+            
+            stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+            
+            stmt.close();
+            conn.commit();
+            conn.close();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+        
+        
+    }
+    
+    
+    public void checkIn(int id){
+        
+        
+        String sql = "update guest set status = 'arrived' where id = " + id +";";
+        
+        Connection conn = null;
+        Statement stmt = null;
+        
+        try{
+            //Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:C://Users//Jayden//Desktop//sqlite-tools-win32-x86-3200100/Example.db");
+            conn.setAutoCommit(false);
+            System.out.println("Opened DB");
+            
+            stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+            
+            stmt.close();
+            conn.commit();
+            conn.close();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+        
+    }
+    
+    
+}
+     
